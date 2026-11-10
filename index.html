@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracker & Grand Vitara Hub | O Portal Definitivo 4x4 (J20A)</title>
+  <meta name="description" content="Guia técnico, simulador visual de pneus e lift, peças compatíveis nacionais e comunidade para Chevrolet Tracker 2.0 16V e Suzuki Grand Vitara 2.0 16V." />
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#0f172a',
+              accent: '#f59e0b',
+              hover: '#d97706',
+              red: '#ef4444'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Estilos Customizados Clean -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
+
+  <!-- ==================== 1. BARRA SUPERIOR DE ANÚNCIO (ESTILO TOPOAK) ==================== -->
+  <div class="bg-slate-950 text-white text-xs py-2 px-4 no-print border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Lado Esquerdo: Tag em Pílula Vermelha -->
+      <div class="flex items-center gap-2">
+        <span class="bg-red-600 text-white font-extrabold px-2.5 py-0.5 rounded-full text-[11px] tracking-wide uppercase">
+          100% Gratuito
+        </span>
+        <span class="text-slate-300 font-medium hidden sm:inline">
+          Guia Colaborativo dos Irmãos 4x4 (Mecânica Suzuki J20A 2.0 16V)
+        </span>
+      </div>
+
+      <!-- Centro: Mensagem Principal -->
+      <div class="text-center font-medium hidden md:block text-slate-200">
+        Simulador Visual de Pneus & Lift Ativo • Mais de 40 peças nacionais testadas
+      </div>
+
+      <!-- Lado Direito: Botão de Ação Rápida -->
+      <div>
+        <button id="topbar-suggest-btn" class="bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1 rounded-md text-xs transition inline-flex items-center gap-1.5 shadow-sm">
+          <span>Sugerir Peça</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== 2. HEADER PRINCIPAL CLEAN & NAVEGAÇÃO ==================== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 no-print shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 gap-4">
+        
+        <!-- Logo Estilizado Inspirado em Marcas Overland (TopoAK) -->
+        <a href="#home" class="nav-link flex items-center gap-3 group" data-view="home">
+          <div class="w-10 h-10 bg-slate-950 rounded-lg flex items-center justify-center text-white font-black tracking-tighter text-base shadow-sm group-hover:bg-amber-500 transition">
+            4WD
+          </div>
+          <div>
+            <div class="text-lg font-black tracking-tight text-slate-950 flex items-center gap-1">
+              TRACKER <span class="text-amber-500">/</span> GV
+            </div>
+            <div class="text-[10px] tracking-widest text-slate-400 uppercase font-bold">
+              Overland & Peças Hub
+            </div>
+          </div>
+        </a>
+
+        <!-- Menu de Navegação Horizontal Separado por Assuntos -->
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-semibold text-slate-700">
+          <button class="nav-link px-3.5 py-2 rounded-lg text-slate-900 font-bold hover:text-amber-600 hover:bg-slate-50 transition" data-view="home">
+            Início
+          </button>
+
+          <button class="nav-link px-3.5 py-2 rounded-lg hover:text-amber-600 hover:bg-slate-50 transition flex items-center gap-1.5" data-view="parts">
+            <span>Peças Compatíveis</span>
+            <span class="bg-red-500 text-white text-[10px] font-black px-1.5 py-0.2 rounded-full uppercase">Hot</span>
+          </button>
+
+          <button class="nav-link px-3.5 py-2 rounded-lg hover:text-amber-600 hover:bg-slate-50 transition" data-view="lift">
+            Lift 2" & Adaptações
+          </button>
+
+          <!-- Botão Destaque do Simulador Visual de Pneus -->
+          <button class="nav-link px-3.5 py-2 rounded-lg hover:text-amber-600 hover:bg-slate-50 transition flex items-center gap-1.5 text-amber-700 font-bold bg-amber-50/70 border border-amber-200" data-view="specs">
+            <i data-lucide="disc" class="w-4 h-4 text-amber-600"></i>
+            <span>Simulador de Pneus</span>
+          </button>
+
+          <button class="nav-link px-3.5 py-2 rounded-lg hover:text-amber-600 hover:bg-slate-50 transition" data-view="stores">
+            Onde Comprar
+          </button>
+
+          <button class="nav-link px-3.5 py-2 rounded-lg hover:text-amber-600 hover:bg-slate-50 transition" data-view="community">
+            Garagem & FAQ
+          </button>
+        </nav>
+
+        <!-- Ações do Lado Direito: Busca, Favoritos, Ficha de Impressão -->
+        <div class="flex items-center gap-2">
+          
+          <!-- Botão Atalho de Busca -->
+          <button id="quick-search-nav-btn" class="p-2.5 text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-full transition" title="Pesquisar Peças">
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </button>
+
+          <!-- Botão de Favoritos com Contador -->
+          <button id="quick-favorites-nav-btn" class="p-2.5 text-slate-600 hover:text-red-500 hover:bg-slate-100 rounded-full transition relative" title="Peças Salvas">
+            <i data-lucide="heart" class="w-5 h-5"></i>
+            <span id="nav-fav-badge" class="absolute top-1 right-1 w-4 h-4 bg-red-600 text-white rounded-full text-[10px] font-black flex items-center justify-center">0</span>
+          </button>
+
+          <!-- Ficha de Impressão -->
+          <button id="print-sheet-nav-btn" class="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition" title="Imprimir lista para o porta-luvas">
+            <i data-lucide="printer" class="w-4 h-4 text-slate-700"></i>
+            <span>Porta-Luvas</span>
+          </button>
+
+          <!-- Menu Mobile Toggle -->
+          <button id="mobile-menu-btn" class="lg:hidden p-2 text-slate-700 hover:bg-slate-100 rounded-lg">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Menu Mobile Expansível -->
+      <div id="mobile-menu-panel" class="lg:hidden hidden py-4 border-t border-slate-100 space-y-1">
+        <button class="nav-link w-full text-left px-3 py-2 rounded-md font-semibold text-sm hover:bg-slate-100" data-view="home">Início</button>
+        <button class="nav-link w-full text-left px-3 py-2 rounded-md font-semibold text-sm hover:bg-slate-100" data-view="parts">Peças Compatíveis</button>
+        <button class="nav-link w-full text-left px-3 py-2 rounded-md font-semibold text-sm hover:bg-slate-100" data-view="lift">Lift 2" & Adaptações</button>
+        <button class="nav-link w-full text-left px-3 py-2 rounded-md font-semibold text-sm hover:bg-slate-100 font-bold text-amber-700" data-view="specs">Simulador de Pneus & Lift</button>
+        <button class="nav-link w-full text-left px-3 py-2 rounded-md font-semibold text-sm hover:bg-slate-100" data-view="stores">Onde Comprar</button>
+        <button class="nav-link w-full text-left px-3 py-2 rounded-md font-semibold text-sm hover:bg-slate-100" data-view="community">Garagem & FAQ</button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== CONTEÚDO PRINCIPAL (MULTI-VIEW LIMPO) ==================== -->
+  <main class="flex-1 w-full">
+
+    <!-- ==================== VIEW 1: HOME (VISÃO GERAL ESTILO TOPOAK) ==================== -->
+    <section id="view-home" class="view-panel">
+      
+      <!-- HERO BANNER CINEMÁTICO FULL-WIDTH (COM FOTOS ENVIADAS) -->
+      <div class="relative bg-slate-950 text-white min-h-[480px] sm:min-h-[540px] flex items-center overflow-hidden">
+        
+        <!-- Imagem de Fundo (Alternável) -->
+        <div id="hero-bg-container" class="absolute inset-0 bg-cover bg-center transition-all duration-700 opacity-60" style="background-image: url('assets/tracker-action.jpg');"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 w-full">
+          <div class="max-w-2xl">
+            
+            <!-- Tag Superior -->
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 mb-4 backdrop-blur-sm">
+              <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+              Comunidade Mecânica & Expedição 4x4
+            </div>
+
+            <!-- Título Principal Impactante -->
+            <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight sm:leading-none">
+              O GUIA DEFINITIVO DOS GÊMEOS 4X4
+            </h1>
+
+            <p class="mt-4 text-base sm:text-lg text-slate-200 leading-relaxed font-normal">
+              Chevrolet Tracker 2.0 16V & Suzuki Grand Vitara SQ420. Informações organizadas por assunto: simulador visual de pneus, peças compatíveis, lift e compras seguras.
+            </p>
+
+            <!-- Ações Principais -->
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <button class="nav-link px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/25 flex items-center gap-2" data-view="specs">
+                <i data-lucide="disc" class="w-4 h-4"></i>
+                Abrir Simulador Visual de Pneus
+              </button>
+
+              <button class="nav-link px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-sm transition backdrop-blur-sm border border-white/20 flex items-center gap-2" data-view="parts">
+                <i data-lucide="search" class="w-4 h-4"></i>
+                Ver Peças Compatíveis
+              </button>
+            </div>
+
+            <!-- Alternador de Imagem do Hero (Tracker vs Grand Vitara) -->
+            <div class="mt-8 flex items-center gap-2 text-xs text-slate-300">
+              <span class="text-slate-400">Ver viatura:</span>
+              <button id="hero-switch-tracker" class="px-3 py-1 rounded-md bg-white/20 text-white font-bold hover:bg-white/30 transition">
+                Tracker na Poeira
+              </button>
+              <button id="hero-switch-gv" class="px-3 py-1 rounded-md bg-white/10 text-slate-300 font-semibold hover:bg-white/20 transition">
+                Grand Vitara Studio
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SEÇÃO: NAVEGUE POR ASSUNTO (TOPIC GRID LIMPO & ESPAÇOSO) -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs font-black uppercase tracking-widest text-amber-600 block mb-2">
+            Organização Descomplicada
+          </span>
+          <h2 class="text-3xl font-extrabold text-slate-950 tracking-tight">
+            Navegue por Assunto
+          </h2>
+          <p class="text-slate-500 text-sm mt-2">
+            Sem poluição visual: clique na categoria desejada para acessar conteúdos dedicados.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- Card 1: Simulador Visual de Pneus e Lift (NOVO) -->
+          <div class="clean-card p-6 flex flex-col justify-between group cursor-pointer border-amber-300 hover:border-amber-500 bg-amber-50/20" onclick="window.appNavigate('specs')">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition shadow-sm">
+                <i data-lucide="disc" class="w-6 h-6"></i>
+              </div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Interativo</span>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-amber-600 transition mb-2">
+                Simulador Visual de Pneus & Lift
+              </h3>
+              <p class="text-slate-500 text-xs leading-relaxed">
+                Veja o visual da Tracker ou Grand Vitara em tempo real ao selecionar lift de 1 polegada, 2 polegadas e medidas de pneus (225/70/16, 225/75, etc.).
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-amber-200/60 flex items-center justify-between text-xs font-bold text-amber-700">
+              <span>Testar Simulador Visual</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Card 2: Peças Compatíveis -->
+          <div class="clean-card p-6 flex flex-col justify-between group cursor-pointer hover:border-amber-400" onclick="window.appNavigate('parts')">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition">
+                <i data-lucide="package-check" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-amber-600 transition mb-2">
+                Peças Compatíveis & Nacionais
+              </h3>
+              <p class="text-slate-500 text-xs leading-relaxed">
+                Bomba de combustível do Gol MI, velas NGK, sonda universal, pastilhas Cobreq, amortecedores de Suprema e dezenas de peças paralelas de qualidade.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-600">
+              <span>Acessar Catálogo</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Card 3: Lift 2" & Suspensão -->
+          <div class="clean-card p-6 flex flex-col justify-between group cursor-pointer hover:border-emerald-400" onclick="window.appNavigate('lift')">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition">
+                <i data-lucide="trending-up" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-emerald-600 transition mb-2">
+                Receita do Lift de 2" (50mm)
+              </h3>
+              <p class="text-slate-500 text-xs leading-relaxed">
+                Tudo sobre erguer a suspensão para rodar com pneus 225/75 R16: medidas de calços, molas de Santana, amortecedores de Omega Suprema e cambagem.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-600">
+              <span>Ver Passo a Passo</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Card 4: Solução da Bomba do 4x4 -->
+          <div class="clean-card p-6 flex flex-col justify-between group cursor-pointer hover:border-sky-400" onclick="window.appNavigate('lift')">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition">
+                <i data-lucide="zap" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-sky-600 transition mb-2">
+                Bomba do 4x4 & Roda Livre AVM
+              </h3>
+              <p class="text-slate-500 text-xs leading-relaxed">
+                Como resolver a luz 4WD piscando no painel: realocação da bombinha de vácuo para o cofre do motor ou instalação de cubos de roda livre manual AVM 438.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-sky-600">
+              <span>Ver Solução Crônica</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Card 5: Onde Comprar Peças -->
+          <div class="clean-card p-6 flex flex-col justify-between group cursor-pointer hover:border-purple-400" onclick="window.appNavigate('stores')">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition">
+                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-purple-600 transition mb-2">
+                Onde Comprar & Lojas Confiáveis
+              </h3>
+              <p class="text-slate-500 text-xs leading-relaxed">
+                Diretório de fornecedores testados: Suzucar, Tração Offroad, Alternativa 4x4, links diretos no Mercado Livre e dicas de compras no AliExpress.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-purple-600">
+              <span>Ver Lojas & Links</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Card 6: Garagem & Comunidade -->
+          <div class="clean-card p-6 flex flex-col justify-between group cursor-pointer hover:border-rose-400" onclick="window.appNavigate('community')">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition">
+                <i data-lucide="users" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-rose-600 transition mb-2">
+                Garagem & Dúvidas Frequentes
+              </h3>
+              <p class="text-slate-500 text-xs leading-relaxed">
+                Fotos de viaturas dos proprietários, setups de expedição, pneus utilizados e respostas claras para as dúvidas mais recorrentes da comunidade.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-rose-600">
+              <span>Conhecer a Comunidade</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SEÇÃO COMPARAÇÃO VISUAL: DOIS IRMÃOS (COM AS FOTOS FORNECIDAS) -->
+      <section class="bg-white border-y border-slate-200 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-xs font-black uppercase tracking-widest text-slate-400 block mb-2">
+              DNA Japonês Compartilhado
+            </span>
+            <h2 class="text-3xl font-extrabold text-slate-950 tracking-tight">
+              Irmãos Gêmeos: O Que Muda e O Que é Igual?
+            </h2>
+            <p class="text-slate-500 text-sm mt-2">
+              Mecanicamente 100% idênticos. As diferenças resumem-se à roupagem externa e detalhes de acabamento.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+            
+            <!-- Coluna Chevrolet Tracker -->
+            <div class="clean-card overflow-hidden flex flex-col justify-between">
+              <div>
+                <div class="h-64 overflow-hidden relative">
+                  <img src="assets/tracker-action.jpg" alt="Chevrolet Tracker na terra" class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500" />
+                  <span class="absolute top-3 left-3 bg-slate-950/80 text-white text-xs font-bold px-3 py-1 rounded-md backdrop-blur-sm">
+                    Chevrolet Tracker 2.0 16V
+                  </span>
+                </div>
+                <div class="p-6">
+                  <h3 class="text-xl font-bold text-slate-900 mb-2">A Versão Brasileira / Mercosul</h3>
+                  <p class="text-slate-600 text-xs leading-relaxed mb-4">
+                    Comercializada pela rede Chevrolet entre 2001 e 2009. Montada na Argentina na planta GM/Suzuki com mecânica 100% japonesa genuína (motor Suzuki J20A DOHC de 128 cv).
+                  </p>
+                  <ul class="text-xs text-slate-500 space-y-1.5 border-t border-slate-100 pt-3">
+                    <li>✓ Grade dianteira com emblema da gravata Chevrolet</li>
+                    <li>✓ Faróis de milha redondos integrados no para-choque</li>
+                    <li>✓ Câmbio manual de 5 marchas (ou automático em lotes específicos)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Coluna Suzuki Grand Vitara -->
+            <div class="clean-card overflow-hidden flex flex-col justify-between">
+              <div>
+                <div class="h-64 overflow-hidden relative bg-white">
+                  <img src="assets/grand-vitara-studio.jpg" alt="Suzuki Grand Vitara SQ420" class="w-full h-full object-contain p-4 object-center hover:scale-105 transition-transform duration-500" />
+                  <span class="absolute top-3 left-3 bg-slate-950/80 text-white text-xs font-bold px-3 py-1 rounded-md backdrop-blur-sm">
+                    Suzuki Grand Vitara SQ420
+                  </span>
+                </div>
+                <div class="p-6">
+                  <h3 class="text-xl font-bold text-slate-900 mb-2">O Projeto Original Suzuki (Japão)</h3>
+                  <p class="text-slate-600 text-xs leading-relaxed mb-4">
+                    A primeira geração mundial (SQ420 - 1998 a 2005). Carroceria com pintura em dois tons (saias cinzas), chassi com longarinas e tração integral temporária com reduzida.
+                  </p>
+                  <ul class="text-xs text-slate-500 space-y-1.5 border-t border-slate-100 pt-3">
+                    <li>✓ Grade dianteira cromada com o 'S' clássico da Suzuki</li>
+                    <li>✓ Molduras plásticas laterais largas de proteção</li>
+                    <li>✓ Todas as peças de suspensão e motor são 100% intercambiáveis</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SEÇÃO ESSENCIAIS (PRODUTOS MAIS PROCURADOS ESTILO TOPOAK) -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div>
+            <span class="text-xs font-black uppercase tracking-widest text-red-600 block mb-1">
+              Top Salva-Vidas
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-950">
+              As 4 Peças Compatíveis Mais Procuradas
+            </h2>
+          </div>
+          <button class="nav-link text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1" data-view="parts">
+            <span>Ver todo o catálogo (40+ peças)</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="home-featured-parts">
+          <!-- Injetado via JS com visual ultra clean -->
+        </div>
+      </section>
+
+    </section>
+
+    <!-- ==================== VIEW 2: CATÁLOGO DE PEÇAS COMPATÍVEIS ==================== -->
+    <section id="view-parts" class="view-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      
+      <!-- Cabeçalho da Seção -->
+      <div class="mb-8">
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 mb-2">
+          <a href="#home" class="nav-link hover:text-slate-900" data-view="home">Início</a>
+          <span>/</span>
+          <span class="text-slate-900">Catálogo de Peças</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
+          Peças Compatíveis & Equivalências Nacionais
+        </h1>
+        <p class="text-slate-500 text-sm mt-1 max-w-2xl">
+          Evite a concessionária e compre peças paralelas de primeira linha encontradas em qualquer autopeça do Brasil.
+        </p>
+      </div>
+
+      <!-- Barra de Pesquisa e Filtros em Pílulas -->
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm mb-8 space-y-4">
+        
+        <!-- Campo de Pesquisa Aberto -->
+        <div class="relative">
+          <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+          <input 
+            type="text" 
+            id="clean-search-input" 
+            placeholder="Digite o nome da peça, código original ou carro doador (ex: Gol, Corolla, Suprema, bomba, correia)..." 
+            class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition"
+          />
+        </div>
+
+        <!-- Filtros em Pílulas Horizontais (Sistema) -->
+        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
+          <span class="text-xs font-bold text-slate-400 mr-2">Sistema:</span>
+          <button class="pill-filter active px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-950 text-white transition" data-filter-system="all">Todos</button>
+          <button class="pill-filter px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-filter-system="motor">Motor J20A</button>
+          <button class="pill-filter px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-filter-system="suspensao">Suspensão & Direção</button>
+          <button class="pill-filter px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-filter-system="freios">Freios</button>
+          <button class="pill-filter px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-filter-system="transmissao">Câmbio & 4x4</button>
+          <button class="pill-filter px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-filter-system="eletrica">Elétrica</button>
+        </div>
+
+        <!-- Filtro Secundário: Nível & Favoritos -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span id="clean-parts-counter" class="font-bold text-slate-900">Carregando catálogo...</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="clean-fav-toggle" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:border-red-400 font-semibold flex items-center gap-1.5 transition">
+              <i data-lucide="heart" class="w-3.5 h-3.5 text-red-500"></i>
+              <span>Somente Favoritas</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Grid de Peças Estilo E-commerce Clean -->
+      <div id="clean-parts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Injetado via JS -->
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 3: LIFT 2" & ADAPTAÇÕES ==================== -->
+    <section id="view-lift" class="view-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      
+      <!-- Cabeçalho -->
+      <div class="mb-8">
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 mb-2">
+          <a href="#home" class="nav-link hover:text-slate-900" data-view="home">Início</a>
+          <span>/</span>
+          <span class="text-slate-900">Lift 2" & Adaptações</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
+          Receitas de Lift de Suspensão de 2" (50mm)
+        </h1>
+        <p class="text-slate-500 text-sm mt-1 max-w-2xl">
+          Instruções passo a passo consagradas pela comunidade off-road brasileira para erguer sua Tracker ou Grand Vitara sem comprometer a segurança.
+        </p>
+      </div>
+
+      <!-- Banner Atalho para o Simulador Visual de Pneus -->
+      <div class="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-6 text-slate-950 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-amber-500/20">
+        <div>
+          <span class="bg-slate-950 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider inline-block mb-1">Novo Recurso</span>
+          <h3 class="text-xl font-black">Quer ver como o carro vai ficar antes de montar?</h3>
+          <p class="text-xs font-semibold text-slate-900/80 mt-0.5">Use o Simulador Visual Interativo com altura de lift ajustável e medidas reais de pneus.</p>
+        </div>
+        <button class="nav-link px-5 py-2.5 bg-slate-950 hover:bg-slate-900 text-white text-xs font-black rounded-xl transition shadow-sm whitespace-nowrap" data-view="specs">
+          Abrir Simulador Visual
+        </button>
+      </div>
+
+      <!-- GUIAS DETALHADOS EM ACCORDION / CARDS LIMPOS -->
+      <div id="clean-guides-list" class="space-y-6">
+        <!-- Injetado via JS -->
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 4: ONDE COMPRAR ==================== -->
+    <section id="view-stores" class="view-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="mb-8">
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 mb-2">
+          <a href="#home" class="nav-link hover:text-slate-900" data-view="home">Início</a>
+          <span>/</span>
+          <span class="text-slate-900">Onde Comprar</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
+          Lojas Especializadas & Fornecedores Confiáveis
+        </h1>
+        <p class="text-slate-500 text-sm mt-1 max-w-2xl">
+          Onde comprar peças originais e paralelas com segurança, agilidade e indicação da comunidade.
+        </p>
+      </div>
+
+      <div id="clean-stores-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Injetado via JS -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 5: SIMULADOR VISUAL DE PNEUS & FLUIDOS ==================== -->
+    <section id="view-specs" class="view-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      
+      <div class="mb-8">
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 mb-2">
+          <a href="#home" class="nav-link hover:text-slate-900" data-view="home">Início</a>
+          <span>/</span>
+          <span class="text-slate-900">Pneus & Fluidos</span>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 class="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
+              Simulador Visual de Pneus & Lift (Stance 4x4)
+            </h1>
+            <p class="text-slate-500 text-sm mt-1 max-w-2xl">
+              Alterne entre Tracker e Grand Vitara, selecione o lift (1", 2", etc.) e a medida do pneu (ex: 225/70/16) para visualizar a postura, vão livre e funcionalidade do carro em tempo real.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== O SIMULADOR VISUAL COMPLETO ==================== -->
+      <div class="clean-card p-6 sm:p-8 bg-white mb-12 border-2 border-slate-200">
+        
+        <!-- CONTROLES SUPERIORES DO SIMULADOR -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pb-6 border-b border-slate-100">
+          
+          <!-- 1. Escolha do Carro -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <i data-lucide="car" class="w-4 h-4 text-amber-600"></i>
+              1. Veículo:
+            </label>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="sim-btn-car-tracker" class="sim-car-btn active px-3 py-2.5 rounded-xl border-2 border-slate-900 bg-slate-900 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm" data-car="tracker">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                Tracker 2.0
+              </button>
+              <button id="sim-btn-car-gv" class="sim-car-btn px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex items-center justify-center gap-1.5" data-car="gv">
+                <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+                Grand Vitara
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Escolha do Lift -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <i data-lucide="arrow-up" class="w-4 h-4 text-emerald-600"></i>
+              2. Altura do Lift:
+            </label>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button class="sim-lift-btn px-2 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition" data-lift="0">0" (Orig.)</button>
+              <button class="sim-lift-btn active px-2 py-2.5 rounded-lg border-2 border-amber-600 bg-amber-50 text-xs font-bold text-amber-900 transition" data-lift="1">1" (25mm)</button>
+              <button class="sim-lift-btn px-2 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition" data-lift="2">2" (50mm)</button>
+              <button class="sim-lift-btn px-2 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition" data-lift="2.5">2.5"</button>
+            </div>
+          </div>
+
+          <!-- 3. Escolha do Desenho da Banda de Rodagem -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <i data-lucide="shield" class="w-4 h-4 text-sky-600"></i>
+              3. Tipo de Pneu:
+            </label>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button class="sim-tread-btn px-2 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition" data-tread="ht">H/T Asfalto</button>
+              <button class="sim-tread-btn active px-2 py-2.5 rounded-lg border-2 border-slate-900 bg-slate-900 text-white text-xs font-bold transition" data-tread="at">A/T Misto</button>
+              <button class="sim-tread-btn px-2 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition" data-tread="mt">M/T Lama</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 4. Seletor de Medidas de Pneus em Pílulas Destacadas -->
+        <div class="py-5 border-b border-slate-100">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5">
+            4. Escolha a Medida Compatível do Pneu:
+          </label>
+          <div class="flex flex-wrap items-center gap-2" id="sim-tires-pills-container">
+            <!-- Pílulas dos pneus geradas via JS -->
+          </div>
+        </div>
+
+        <!-- ARENA FOTOGRÁFICA INTERATIVA DO SIMULADOR (REAL PHOTO STAGE) -->
+        <div class="my-6">
+          <div class="sim-stage-wrapper p-6 relative flex flex-col justify-between" id="sim-visual-stage">
+            
+            <!-- Régua Superior e Tags de Status -->
+            <div class="flex items-start justify-between gap-3 z-20">
+              <div class="bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-300 shadow-sm flex items-center gap-2">
+                <span id="stage-car-badge" class="text-xs font-black text-slate-900">Chevrolet Tracker 2.0 16V</span>
+                <span class="text-slate-300">|</span>
+                <span id="stage-lift-badge" class="text-xs font-extrabold text-amber-600">Lift 1" (25mm)</span>
+                <span class="text-slate-300">|</span>
+                <span id="stage-tire-badge" class="text-xs font-bold text-slate-700">Pneu: 225/70 R16 A/T</span>
+              </div>
+
+              <!-- Ponto de Alerta de Raspagem -->
+              <div id="stage-rub-alert-pill" class="bg-emerald-50 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Configuração Livre: Sem Raspagem</span>
+              </div>
+            </div>
+
+            <!-- ARENA FOTOGRÁFICA INTERATIVA DO SIMULADOR (CANVAS REAL ULTRA-LIMPO SEM CÍRCULOS ARTIFICIAIS) -->
+            <div class="relative w-full max-w-xl mx-auto my-3 flex flex-col items-center justify-center">
+              <canvas id="sim-canvas" width="600" height="400" class="w-full h-auto max-w-full rounded-2xl block"></canvas>
+            </div>
+
+            <!-- Linha do Solo / Asfalto -->
+            <div class="sim-ground-line"></div>
+
+            <!-- Legenda Inferior de Vão Livre Real -->
+            <div class="flex items-center justify-between text-xs text-slate-600 pt-2 z-20 border-t border-slate-300">
+              <span class="font-bold flex items-center gap-1.5">
+                <i data-lucide="ruler" class="w-4 h-4 text-amber-600"></i>
+                Vão Livre do Solo: <strong id="stage-clearance-cm" class="text-slate-950 font-black text-sm">23,6 cm</strong>
+                <span id="stage-clearance-diff" class="text-emerald-700 font-bold text-xs">(+4,1 cm vs fábrica)</span>
+              </span>
+
+              <span class="text-[11px] text-slate-500 hidden sm:inline">
+                Fotografia real com aro original Suzuki/GM e elevação proporcional precisa
+              </span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PAINEL DE TELEMETRIA TÉCNICA E FUNCIONALIDADE DO CARRO -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          
+          <!-- Card 1: Vão Livre do Diferencial Traseiro -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Diferencial Traseiro</span>
+            <div class="mt-1 flex items-baseline gap-1.5">
+              <strong id="telemetry-diff-height" class="text-xl font-black text-slate-900">21,1 cm</strong>
+              <span id="telemetry-diff-gain" class="text-xs font-bold text-emerald-600">+1,6 cm</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1 leading-snug">
+              Eixo rígido: só sobe pelo raio do pneu. Calço de mola não altera esta medida.
+            </p>
+          </div>
+
+          <!-- Card 2: Vão Livre da Carroceria / Ventre -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Vão Livre do Chassi</span>
+            <div class="mt-1 flex items-baseline gap-1.5">
+              <strong id="telemetry-chassis-height" class="text-xl font-black text-slate-900">23,6 cm</strong>
+              <span id="telemetry-chassis-gain" class="text-xs font-bold text-emerald-600">+4,1 cm</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1 leading-snug">
+              Evita que a viatura encalhe pelo ventre em cristas, pedras e facões de erosão.
+            </p>
+          </div>
+
+          <!-- Card 3: Erro de Velocímetro & Relação -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Velocímetro & Relação</span>
+            <div class="mt-1 flex items-baseline gap-1.5">
+              <strong id="telemetry-speedo-err" class="text-xl font-black text-amber-600">+4,8%</strong>
+              <span id="telemetry-rpm-at100" class="text-xs font-bold text-slate-600">~2.815 RPM em 5ª</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1 leading-snug" id="telemetry-speedo-detail">
+              A 100 km/h no painel, sua velocidade real será 104,8 km/h.
+            </p>
+          </div>
+
+          <!-- Card 4: Diagnóstico de Raspagem -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Raspagem na Caixa</span>
+            <div class="mt-1">
+              <strong id="telemetry-rub-status" class="text-sm font-black text-emerald-700 block">🟢 Totalmente Livre</strong>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1 leading-snug" id="telemetry-rub-detail">
+              Com Lift 1" e 225/70/16, o pneu esterça 100% livre em batentes e parabarros.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- PAINEL AVANÇADO DE ENGENHARIA DE SUSPENSÃO (CALÇOS, CAMBAGEM E PANHARD) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-xs">
+          
+          <!-- Item 1: Calços Dianteiro e Traseiro -->
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Calços em Nylon/PU</span>
+              <span id="eng-badge-lift" class="bg-amber-100 text-amber-900 font-extrabold text-[10px] px-2 py-0.5 rounded-full">Lift 1" (25mm)</span>
+            </div>
+            <div class="space-y-1">
+              <div class="flex justify-between text-slate-700">
+                <span>Torre Dianteira (McPherson):</span>
+                <strong id="eng-spacer-front" class="text-slate-900 font-bold">19 mm (3/4")</strong>
+              </div>
+              <div class="flex justify-between text-slate-700">
+                <span>Mola Traseira (Eixo Rígido):</span>
+                <strong id="eng-spacer-rear" class="text-slate-900 font-bold">25 mm (1")</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: Cambagem Dianteira -->
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Cambagem Dianteira (Camber)</span>
+              <span id="eng-camber-deg" class="text-emerald-700 font-extrabold text-[10px]">+0.8°</span>
+            </div>
+            <p id="eng-camber-sol" class="text-slate-600 text-[11px] leading-snug">
+              Ajustável na folga dos parafusos originais da manga de eixo (sem custo de excêntrico).
+            </p>
+          </div>
+
+          <!-- Item 3: Amortecedores & Panhard Traseira -->
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Amortecedor & Panhard</span>
+              <span id="eng-panhard-status" class="text-slate-700 font-bold text-[10px]">Alinhado</span>
+            </div>
+            <p id="eng-shock-req" class="text-slate-600 text-[11px] leading-snug">
+              Amortecedores originais atendem bem. Eixo centrado sem deslocamento lateral.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- RECOMENDAÇÃO DE PEÇAS PARA ESTA COMBINAÇÃO EXATA -->
+        <div class="mt-6 p-5 bg-amber-50/70 border border-amber-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span class="text-[11px] font-black uppercase tracking-wider text-amber-900 block">
+              Receita de Peças Recomendada para Este Setup:
+            </span>
+            <p id="telemetry-parts-recipe" class="text-xs font-semibold text-slate-800 mt-0.5">
+              Calços dianteiros de 19mm em PU + Calços traseiros de 25mm. Amortecedores originais atendem bem.
+            </p>
+          </div>
+
+          <button id="sim-recipe-jump-btn" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg transition whitespace-nowrap shadow-sm">
+            Ver Peças no Catálogo
+          </button>
+        </div>
+
+      </div>
+
+      <!-- TABELA OFICIAL DE FLUIDOS & TORQUES (MANTIDA CLEAN ABAIXO) -->
+      <div class="clean-card overflow-hidden mb-8">
+        <div class="p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-lg font-bold text-slate-900">Especificações de Lubrificantes e Capacidades</h2>
+          <span class="text-xs text-red-600 font-bold bg-red-50 px-2.5 py-1 rounded-full">Atenção Crítica: Câmbio Manual = GL-4</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
+                <th class="p-4">Componente</th>
+                <th class="p-4">Especificação Oficial</th>
+                <th class="p-4">Capacidade</th>
+                <th class="p-4">Intervalo</th>
+                <th class="p-4">Observação / Alerta</th>
+              </tr>
+            </thead>
+            <tbody id="clean-fluids-tbody" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Injetado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Torques -->
+      <div class="clean-card p-6">
+        <h3 class="text-base font-bold text-slate-900 mb-4">Torques Principais de Aperto (Parafusos do Motor J20A)</h3>
+        <div id="clean-torques-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <!-- Injetado via JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 6: GARAGEM & FAQ ==================== -->
+    <section id="view-community" class="view-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="mb-8">
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 mb-2">
+          <a href="#home" class="nav-link hover:text-slate-900" data-view="home">Início</a>
+          <span>/</span>
+          <span class="text-slate-900">Comunidade</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
+          Garagem da Comunidade & Dúvidas Frequentes
+        </h1>
+        <p class="text-slate-500 text-sm mt-1 max-w-2xl">
+          Conheça as viaturas montadas pelos proprietários e tire dúvidas comuns sobre a plataforma.
+        </p>
+      </div>
+
+      <!-- Garagem -->
+      <div class="mb-12">
+        <h2 class="text-xl font-bold text-slate-900 mb-6">Viaturas dos Membros</h2>
+        <div id="clean-community-vehicles" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Injetado via JS -->
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="clean-card p-6 sm:p-8">
+        <h2 class="text-xl font-bold text-slate-900 mb-6">Perguntas & Respostas Frequentes</h2>
+        <div id="clean-faq-list" class="space-y-4">
+          <!-- Injetado via JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL CLEAN DE DETALHES DA PEÇA ==================== -->
+  <div id="clean-part-modal" class="fixed inset-0 z-50 hidden items-center justify-center clean-modal-backdrop p-4 overflow-y-auto">
+    <div id="clean-part-modal-content" class="bg-white border border-slate-200 rounded-3xl max-w-xl w-full shadow-2xl relative my-8 overflow-hidden p-6 sm:p-8">
+      <!-- Injetado dinamicamente -->
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE SUGERIR PEÇA ==================== -->
+  <div id="clean-suggest-modal" class="fixed inset-0 z-50 hidden items-center justify-center clean-modal-backdrop p-4 overflow-y-auto">
+    <div class="bg-white border border-slate-200 rounded-3xl max-w-xl w-full shadow-2xl relative my-8 p-6 sm:p-8">
+      <div class="flex items-center justify-between gap-4 mb-6">
+        <div>
+          <span class="text-xs font-black uppercase text-red-600 tracking-wider">Colaboração 4x4</span>
+          <h3 class="text-2xl font-black text-slate-950">Sugerir Nova Peça Compatível</h3>
+        </div>
+        <button id="close-clean-suggest-modal" class="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-100 transition">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <form id="clean-suggest-form" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nome da Peça Original</label>
+          <input type="text" id="cs-name" required placeholder="Ex: Sensor de Rotação, Bieleta Dianteira..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-slate-900" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Sistema</label>
+            <select id="cs-system" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-slate-900">
+              <option value="motor">Motor J20A</option>
+              <option value="suspensao">Suspensão</option>
+              <option value="freios">Freios</option>
+              <option value="transmissao">Câmbio & 4x4</option>
+              <option value="eletrica">Elétrica</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Código Original (se souber)</label>
+            <input type="text" id="cs-original-code" placeholder="Ex: Suzuki 18213-65D30" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-slate-900" />
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100">
+          <label class="block font-bold text-slate-900 uppercase tracking-wider mb-2">Peça Compatível / Alternativa Nacional</label>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Nome da Peça Doadora (ex: Bomba Gol MI, Bieleta Corolla)</label>
+              <input type="text" id="cs-comp-name" required placeholder="Ex: Bosch Linha Gol / Astra 3.0 Bar" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-slate-900" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Código Fabricante Paralelo</label>
+                <input type="text" id="cs-comp-code" required placeholder="Ex: Bosch 0580453471" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-slate-900" />
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Grau de Instalação</label>
+                <select id="cs-comp-level" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-slate-900">
+                  <option value="plug-and-play">Plug & Play (100% direta)</option>
+                  <option value="adaptacao-leve">Adaptação Leve (fios/conector)</option>
+                  <option value="adaptacao-media">Adaptação Média</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Preço Médio Estimado</label>
+              <input type="text" id="cs-price" placeholder="Ex: R$ 120 - R$ 180" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-slate-900" />
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Observações / Dicas de Montagem</label>
+              <textarea id="cs-notes" rows="3" placeholder="Conte como foi a instalação, se precisou adaptar conector ou arruela..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-slate-900"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 flex items-center justify-end gap-3">
+          <button type="button" onclick="document.getElementById('close-clean-suggest-modal').click()" class="px-4 py-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold">
+            Cancelar
+          </button>
+          <button type="submit" class="px-5 py-2.5 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-lg shadow-sm">
+            Salvar no Catálogo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER CLEAN ESTILO TOPOAK ==================== -->
+  <footer class="bg-white border-t border-slate-200 py-12 px-4 sm:px-6 lg:px-8 mt-16 text-xs text-slate-500 no-print">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+      <div>
+        <div class="text-slate-950 font-black text-sm mb-1 flex items-center justify-center md:justify-start gap-2">
+          <span>TRACKER / GRAND VITARA OVERLAND HUB</span>
+        </div>
+        <p>Iniciativa colaborativa e sem fins lucrativos dedicada à preservação dos modelos 2.0 16V (J20A).</p>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-6 font-semibold text-slate-600">
+        <a href="#home" class="nav-link hover:text-slate-950" data-view="home">Início</a>
+        <a href="#parts" class="nav-link hover:text-slate-950" data-view="parts">Catálogo</a>
+        <a href="#lift" class="nav-link hover:text-slate-950" data-view="lift">Lift 2"</a>
+        <a href="#specs" class="nav-link hover:text-slate-950 font-bold text-amber-700" data-view="specs">Simulador Visual</a>
+        <a href="#stores" class="nav-link hover:text-slate-950" data-view="stores">Lojas</a>
+        <a href="#community" class="nav-link hover:text-slate-950" data-view="community">Garagem</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts de Dados -->
+  <script src="data/parts.js"></script>
+  <script src="data/guides.js"></script>
+  <script src="data/stores.js"></script>
+  <script src="data/specs.js"></script>
+  <script src="data/community.js"></script>
+
+  <!-- Script Principal Clean com Simulador Visual Interativo -->
+  <script src="js/app.js"></script>
+</body>
+</html>
