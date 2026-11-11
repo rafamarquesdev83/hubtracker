@@ -59,7 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const simLiftBtns = document.querySelectorAll(".sim-lift-btn");
   const simTreadBtns = document.querySelectorAll(".sim-tread-btn");
   const simTiresPillsContainer = document.getElementById("sim-tires-pills-container");
-  const simCanvas = document.getElementById("sim-canvas");
+  const simSvgStage = document.getElementById("sim-svg-stage");
+  const simLayer1Masks = document.getElementById("sim-layer-1-masks");
+  const simDynWheelFront = document.getElementById("sim-dyn-wheel-front");
+  const simDynWheelRear = document.getElementById("sim-dyn-wheel-rear");
+  const simLayer3Body = document.getElementById("sim-layer-3-body");
+  const simCarBaseImg = document.getElementById("sim-car-base-img");
+  const simRubHotspot = document.getElementById("sim-rub-hotspot");
 
   // Badges e Telemetria do Stage
   const stageCarBadge = document.getElementById("stage-car-badge");
@@ -294,279 +300,88 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Cache de imagem para renderização Canvas ultrarrápida e sem artefatos
-  let studioCarImageCache = null;
+  // ==================== GERADOR DE RODA VETORIAL SVG (CAMADA 2) ====================
+  // Desenha em SVG vetorial o pneu com cravos AT/MT e roda de 5 raios original Suzuki/Tracker
+  function generateWheelSvg(R, tread, car) {
+    const rimR = 42; // Diâmetro de aro 16" proporcional ao veículo
 
-  function loadStudioCarImage(callback) {
-    if (studioCarImageCache && studioCarImageCache.complete && studioCarImageCache.naturalWidth > 0) {
-      callback(studioCarImageCache);
-      return;
+    // 1. Cravos de Tração nos Ombros da Banda de Rodagem (A/T ou M/T)
+    const numLugs = tread === "mt" ? 22 : 28;
+    const lugDepth = tread === "mt" ? 5.5 : 3.5;
+    const lugWidth = tread === "mt" ? 3.5 : 2.4;
+    let lugsSvg = "";
+    for (let i = 0; i < numLugs; i++) {
+      const angle = (i * 2 * Math.PI) / numLugs;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const x1 = (R - lugDepth) * cos;
+      const y1 = (R - lugDepth) * sin;
+      const x2 = (R - 0.5) * cos;
+      const y2 = (R - 0.5) * sin;
+      lugsSvg += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#090b0e" stroke-width="${lugWidth}" stroke-linecap="round" />`;
     }
-    if (!studioCarImageCache) {
-      studioCarImageCache = new Image();
-      studioCarImageCache.src = "assets/grand-vitara-studio.jpg";
-      studioCarImageCache.onload = () => callback(studioCarImageCache);
-    } else {
-      studioCarImageCache.addEventListener("load", () => callback(studioCarImageCache));
+
+    // 2. Cinco Raios de Liga Leve (Roda clássica Tracker / Grand Vitara)
+    let spokesSvg = "";
+    for (let k = 0; k < 5; k++) {
+      const deg = k * 72 - 90;
+      spokesSvg += `
+        <g transform="rotate(${deg})">
+          <!-- Braço do Raio em Alumínio Usinado -->
+          <path d="M -5 13 L -8.5 ${rimR - 3.5} Q 0 ${rimR - 1.5} 8.5 ${rimR - 3.5} L 5 13 Z" fill="url(#sim-spoke-grad)" stroke="#64748b" stroke-width="0.8" />
+          <!-- Rebaixo central chanfrado esportivo do raio -->
+          <path d="M -2.2 16 L -3.8 ${rimR - 6.5} L 3.8 ${rimR - 6.5} L 2.2 16 Z" fill="#475569" opacity="0.65" />
+          <!-- Friso de brilho usinado -->
+          <line x1="-3.5" y1="18" x2="-5" y2="${rimR - 5.5}" stroke="#ffffff" stroke-width="0.7" opacity="0.6" />
+        </g>
+      `;
     }
-  }
 
-  function drawVehicleOnCanvas(car, lift, tireInfo, tread, rubState) {
-    if (!simCanvas) return;
-    const ctx = simCanvas.getContext("2d");
-    if (!ctx) return;
+    // 3. Furação 5x139.7 (5 Parafusos cromados)
+    let nutsSvg = "";
+    for (let k = 0; k < 5; k++) {
+      const nutAngle = ((k * 72 + 36) * Math.PI) / 180;
+      const nx = (8.5 * Math.cos(nutAngle)).toFixed(1);
+      const ny = (8.5 * Math.sin(nutAngle)).toFixed(1);
+      nutsSvg += `<circle cx="${nx}" cy="${ny}" r="1.8" fill="#e2e8f0" stroke="#0f172a" stroke-width="0.6" />`;
+    }
 
-    loadStudioCarImage((img) => {
-      // Dimensões do Canvas HD (600x400)
-      const W = (simCanvas.width = 600);
-      const H = (simCanvas.height = 400);
+    // 4. Emblema da Calotinha Central
+    const badgeSvg = (car === "gv")
+      ? `<text x="0" y="3.2" fill="#ffffff" font-size="8.5" font-family="sans-serif" font-weight="900" text-anchor="middle">S</text>`
+      : `<path d="M -4 -1.4 L 4 -1.4 L 4 1.4 L -4 1.4 Z" fill="#f59e0b" stroke="#92400e" stroke-width="0.4" /><path d="M -2 -2.8 L 2 -2.8 L 2 2.8 L -2 2.8 Z" fill="#f59e0b" stroke="#92400e" stroke-width="0.4" />`;
 
-      ctx.clearRect(0, 0, W, H);
+    return `
+      <!-- Banda de Rodagem e Flanco do Pneu -->
+      <circle cx="0" cy="0" r="${R.toFixed(1)}" fill="url(#sim-tire-rubber)" stroke="#090b0e" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="${(R * 0.88).toFixed(1)}" fill="#1e222a" opacity="0.9" />
+      <circle cx="0" cy="0" r="${((R + rimR) / 2).toFixed(1)}" fill="none" stroke="#2c333e" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.75" />
+      <circle cx="0" cy="0" r="${(rimR + 2).toFixed(1)}" fill="#12151a" />
+      
+      <!-- Cravos nos Ombros (A/T) -->
+      ${lugsSvg}
 
-      // 1. Fundo de Estúdio Fotográfico Suave
-      const bgGrad = ctx.createRadialGradient(300, 230, 40, 300, 230, 330);
-      bgGrad.addColorStop(0, "#ffffff");
-      bgGrad.addColorStop(0.7, "#f8fafc");
-      bgGrad.addColorStop(1, "#e2e8f0");
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, W, H);
+      <!-- Disco de Freio e Fundo Interno do Aro -->
+      <circle cx="0" cy="0" r="${(rimR - 1).toFixed(1)}" fill="#090d14" />
+      <circle cx="0" cy="0" r="${(rimR * 0.72).toFixed(1)}" fill="#334155" stroke="#1e293b" stroke-width="1" />
+      <circle cx="0" cy="0" r="${(rimR * 0.58).toFixed(1)}" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="2 3" />
+      
+      <!-- Pinça de Freio Dianteira Vermelha -->
+      <path d="M ${(-rimR * 0.65).toFixed(1)} ${(-rimR * 0.28).toFixed(1)} A ${(rimR * 0.7).toFixed(1)} ${(rimR * 0.7).toFixed(1)} 0 0 1 ${(-rimR * 0.28).toFixed(1)} ${(-rimR * 0.65).toFixed(1)} L ${(-rimR * 0.18).toFixed(1)} ${(-rimR * 0.50).toFixed(1)} A ${(rimR * 0.53).toFixed(1)} ${(rimR * 0.53).toFixed(1)} 0 0 0 ${(-rimR * 0.50).toFixed(1)} ${(-rimR * 0.18).toFixed(1)} Z" fill="#dc2626" />
 
-      // 2. Geometria de Posicionamento Físico Real
-      const groundY = 328;              // Linha do solo / asfalto
-      const baseRadius = 52;            // Raio do pneu 235/60 de fábrica
-      const tireScale = (tireInfo.diameterMm || 688) / 688;
-      const currentRadius = baseRadius * tireScale;
-      const radiusGainPx = currentRadius - baseRadius;
+      <!-- Borda de Alumínio Usinado do Aro -->
+      <circle cx="0" cy="0" r="${rimR.toFixed(1)}" fill="none" stroke="#cbd5e1" stroke-width="3" />
+      <circle cx="0" cy="0" r="${(rimR - 2.5).toFixed(1)}" fill="none" stroke="#64748b" stroke-width="1" />
 
-      // O pneu sempre assenta no chão. Logo o centro do cubo sobe com o raio do pneu
-      const hubY = groundY - currentRadius;
-      const hubFx = 260; // Centro do cubo dianteiro
-      const hubRx = 520; // Centro do cubo traseiro
+      <!-- 5 Raios de Liga Leve -->
+      ${spokesSvg}
 
-      // A carroceria sobe com o Lift de Suspensão + ganho de raio do pneu
-      const liftPx = lift * 13.5; // 0" = 0px | 1" = 13.5px | 2" = 27px | 2.5" = 34px
-      const bodyShiftY = -(liftPx + radiusGainPx);
-
-      // 3. Sombra de Solo / Estúdio Fotográfico
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(340, groundY + 4, 235, 12, 0, 0, Math.PI * 2);
-      const shadowGrad = ctx.createRadialGradient(340, groundY + 4, 15, 340, groundY + 4, 235);
-      shadowGrad.addColorStop(0, "rgba(15, 23, 42, 0.40)");
-      shadowGrad.addColorStop(0.5, "rgba(15, 23, 42, 0.14)");
-      shadowGrad.addColorStop(1, "transparent");
-      ctx.fillStyle = shadowGrad;
-      ctx.fill();
-      ctx.restore();
-
-      // 4. Interior da Caixa de Roda (Fundo escuro da carroceria, sobe junto com o Lift)
-      // Sem cortes secos ou círculos flutuantes: preenche realisticamente o vão do para-lama
-      ctx.save();
-      ctx.fillStyle = "#15181e";
-
-      // Caixa Dianteira
-      const fCavityX = hubFx;
-      const fCavityY = hubY + bodyShiftY + radiusGainPx;
-      ctx.beginPath();
-      ctx.arc(fCavityX, fCavityY, currentRadius + 6 + liftPx * 0.4, Math.PI, 0, false);
-      ctx.lineTo(fCavityX + 58, groundY);
-      ctx.lineTo(fCavityX - 58, groundY);
-      ctx.closePath();
-      ctx.fill();
-
-      // Caixa Traseira
-      const rCavityX = hubRx;
-      const rCavityY = hubY + bodyShiftY + radiusGainPx;
-      ctx.beginPath();
-      ctx.arc(rCavityX, rCavityY, currentRadius + 6 + liftPx * 0.4, Math.PI, 0, false);
-      ctx.lineTo(rCavityX + 58, groundY);
-      ctx.lineTo(rCavityX - 58, groundY);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-
-      // 5. Renderização das Rodas com Aros Originais de Fábrica e Borracha Real
-      function renderWheel(hx, hy, isFront) {
-        ctx.save();
-
-        // 5.1 Borracha do Pneu com Degradê Fotográfico (sem bordas circulares duras!)
-        ctx.beginPath();
-        ctx.arc(hx, hy, currentRadius, 0, Math.PI * 2);
-        const tireGrad = ctx.createRadialGradient(hx, hy, currentRadius * 0.55, hx, hy, currentRadius);
-        tireGrad.addColorStop(0, "#282d35");
-        tireGrad.addColorStop(0.65, "#1b1f25");
-        tireGrad.addColorStop(1, "#111418");
-        ctx.fillStyle = tireGrad;
-        ctx.fill();
-
-        // 5.2 Cravos de Tração Off-Road nos Ombros (A/T ou M/T) - textura natural
-        if (tread === "at" || tread === "mt") {
-          const lugs = tread === "mt" ? 22 : 28;
-          const lugDepth = tread === "mt" ? 4.5 : 2.5;
-          ctx.strokeStyle = "rgba(45, 52, 60, 0.75)";
-          ctx.lineWidth = tread === "mt" ? 2.5 : 1.5;
-          for (let i = 0; i < lugs; i++) {
-            const angle = (i * 2 * Math.PI) / lugs;
-            const x1 = hx + Math.cos(angle) * (currentRadius - lugDepth);
-            const y1 = hy + Math.sin(angle) * (currentRadius - lugDepth);
-            const x2 = hx + Math.cos(angle) * (currentRadius - 0.5);
-            const y2 = hy + Math.sin(angle) * (currentRadius - 0.5);
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-          }
-        }
-
-        // 5.3 Aro Original de Liga Leve Suzuki/GM da foto de estúdio
-        const srcHx = isFront ? 195 : 390;
-        const srcHy = isFront ? 210 : 211;
-        const srcRimR = 23;
-        const destRimR = baseRadius * 0.55; // preserva diâmetro do aro 16"
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(hx, hy, destRimR, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.drawImage(
-          img,
-          srcHx - srcRimR,
-          srcHy - srcRimR,
-          srcRimR * 2,
-          srcRimR * 2,
-          hx - destRimR,
-          hy - destRimR,
-          destRimR * 2,
-          destRimR * 2
-        );
-        ctx.strokeStyle = "rgba(15, 23, 42, 0.35)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.restore();
-
-        // 5.4 Calotinha Central: Bowtie Chevrolet se Tracker
-        if (car === "tracker") {
-          ctx.beginPath();
-          ctx.arc(hx, hy, destRimR * 0.22, 0, Math.PI * 2);
-          ctx.fillStyle = "#1e242b";
-          ctx.fill();
-          ctx.fillStyle = "#d97706";
-          ctx.fillRect(hx - 2.5, hy - 1.2, 5, 2.4);
-        }
-
-        ctx.restore();
-      }
-
-      renderWheel(hubFx, hubY, true);
-      renderWheel(hubRx, hubY, false);
-
-      // 6. Carroceria Fotográfica Real (Eleva com o Lift de Suspensão)
-      ctx.save();
-      ctx.translate(0, bodyShiftY);
-
-      // Máscara suave para abertura das caixas de roda na lataria
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(0, 0, W, H);
-      const cutFx = hubFx;
-      const cutFy = hubY - bodyShiftY;
-      ctx.arc(cutFx, cutFy, currentRadius + 1, 0, Math.PI * 2, true);
-      const cutRx = hubRx;
-      const cutRy = hubY - bodyShiftY;
-      ctx.arc(cutRx, cutRy, currentRadius + 1, 0, Math.PI * 2, true);
-      ctx.clip();
-
-      // Renderiza carroceria do veículo de estúdio
-      ctx.drawImage(img, 0, 0, 450, 300, 0, 0, 600, 400);
-
-      // Limpeza impecável das marcas d'água originais
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(10, 10, 140, 40);
-      ctx.fillRect(380, 360, 215, 35);
-
-      // Personalização de Identidade Visual: Tracker vs Grand Vitara
-      if (car === "tracker") {
-        // Chevrolet Tracker 2.0 16V: Verde Floresta Metálico clássico nacional
-        ctx.save();
-        ctx.globalCompositeOperation = "color";
-        ctx.fillStyle = "rgba(22, 101, 52, 0.85)";
-        ctx.beginPath();
-        ctx.moveTo(35, 235);
-        ctx.lineTo(135, 175);
-        ctx.lineTo(220, 95);
-        ctx.lineTo(440, 95);
-        ctx.lineTo(580, 195);
-        ctx.lineTo(580, 250);
-        ctx.lineTo(35, 250);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.globalCompositeOperation = "source-over";
-        // Gravata dourada Chevrolet na grade dianteira
-        ctx.fillStyle = "#f59e0b";
-        ctx.strokeStyle = "#92400e";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.rect(83, 211, 10, 4);
-        ctx.fill();
-        ctx.stroke();
-
-        // Placa Dianteira TRACKER
-        ctx.fillStyle = "#0f172a";
-        ctx.fillRect(66, 241, 46, 16);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 9px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("TRACKER", 89, 252);
-        ctx.restore();
-      } else {
-        // Suzuki Grand Vitara: Placa Dianteira
-        ctx.fillStyle = "#0f172a";
-        ctx.fillRect(66, 241, 46, 16);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 7px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("GRAND VITARA", 89, 252);
-      }
-
-      ctx.restore(); // fim do clip
-      ctx.restore(); // fim do translate
-
-      // 7. Alerta Visual de Raspagem (Se houver interferência na caixa de roda)
-      if (rubState !== "free") {
-        const warnX = 180;
-        const warnY = 270 + bodyShiftY * 0.4;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(warnX, warnY, 11, 0, Math.PI * 2);
-        ctx.fillStyle = rubState === "severe" ? "rgba(239, 68, 68, 0.25)" : "rgba(245, 158, 11, 0.25)";
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(warnX, warnY, 6, 0, Math.PI * 2);
-        ctx.fillStyle = rubState === "severe" ? "#dc2626" : "#d97706";
-        ctx.fill();
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        const label = rubState === "severe" ? "Raspa no Para-choque" : "Leve Raspagem ao Esterçar";
-        ctx.font = "bold 10px sans-serif";
-        const textW = ctx.measureText(label).width;
-        ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
-        if (ctx.roundRect) {
-          ctx.beginPath();
-          ctx.roundRect(warnX - textW / 2 - 8, warnY - 28, textW + 16, 20, 6);
-          ctx.fill();
-        } else {
-          ctx.fillRect(warnX - textW / 2 - 8, warnY - 28, textW + 16, 20);
-        }
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "center";
-        ctx.fillText(label, warnX, warnY - 14);
-        ctx.restore();
-      }
-    });
+      <!-- Cubo e Calota Central -->
+      <circle cx="0" cy="0" r="14" fill="#94a3b8" stroke="#475569" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="11" fill="#1e293b" />
+      ${nutsSvg}
+      ${badgeSvg}
+    `;
   }
 
   function updateVisualSimulatorStage() {
@@ -659,8 +474,65 @@ document.addEventListener("DOMContentLoaded", () => {
         "Lift 2.5\" a 3\", amortecedores especiais, Drop de diferencial dianteiro e para-choque off-road cortado.";
     }
 
-    // 2. Renderizar Veículo no Canvas de Alta Fidelidade (sem círculos artificiais)
-    drawVehicleOnCanvas(selectedCar, selectedLift, tireInfo, selectedTread, rubState);
+    // 2. Renderização SVG em 3 Camadas
+    // Geometria de Referência SVG (viewBox 0 0 1000 500)
+    // Diâmetro original de fábrica 235/60 R16 = 688 mm -> Raio base = 72 px
+    const baseRadius = 72;
+    const baseDiameterMm = 688;
+    const tireScale = (tireInfo.diameterMm || baseDiameterMm) / baseDiameterMm;
+    const currentRadius = baseRadius * tireScale;
+    const radiusGainPx = currentRadius - baseRadius;
+
+    // Solo no SVG: com o pneu original (r=72) no cubo cy=340, a base do pneu toca 340 + 72 = 412.
+    // Como o pneu sempre assenta no chão, o cubo sobe com o ganho de raio:
+    const hubY = 340 - radiusGainPx;
+
+    // A carroceria (e as caixas de roda da Camada 1) sobem com o Lift + ganho de raio do pneu
+    const liftPx = selectedLift * 22; // 0" = 0px, 1" = 22px, 2" = 44px, 2.5" = 55px
+    const totalBodyRise = liftPx + radiusGainPx;
+    const bodyTranslateY = -totalBodyRise;
+
+    // Camada 1: Círculos escuros subindo junto com a carroceria no Lift
+    if (simLayer1Masks) {
+      simLayer1Masks.setAttribute("transform", `translate(0, ${bodyTranslateY.toFixed(2)})`);
+    }
+
+    // Camada 2: As duas rodas dinâmicas desenhadas em SVG vetorial centralizadas em x=265 e x=815
+    const wheelSvgContent = generateWheelSvg(currentRadius, selectedTread, selectedCar);
+    if (simDynWheelFront) {
+      simDynWheelFront.setAttribute("transform", `translate(265, ${hubY.toFixed(2)})`);
+      simDynWheelFront.innerHTML = wheelSvgContent;
+    }
+    if (simDynWheelRear) {
+      simDynWheelRear.setAttribute("transform", `translate(815, ${hubY.toFixed(2)})`);
+      simDynWheelRear.innerHTML = wheelSvgContent;
+    }
+
+    // Camada 3: A imagem tracker-carroceria.jpg recebendo apenas transform: translateY()
+    if (simLayer3Body) {
+      simLayer3Body.setAttribute("transform", `translate(0, ${bodyTranslateY.toFixed(2)})`);
+    }
+
+    // Indicador dinâmico de ponto de raspagem
+    if (simRubHotspot) {
+      if (rubState !== "free") {
+        simRubHotspot.classList.remove("hidden");
+        const rubX = 265 - currentRadius + 10;
+        const rubY = hubY + 12;
+        simRubHotspot.setAttribute("transform", `translate(${rubX.toFixed(1)}, ${rubY.toFixed(1)})`);
+        const pulseCircle = simRubHotspot.querySelector(".animate-ping");
+        const dotCircle = simRubHotspot.querySelectorAll("circle")[1];
+        if (rubState === "severe") {
+          if (pulseCircle) pulseCircle.setAttribute("fill", "#ef4444");
+          if (dotCircle) dotCircle.setAttribute("fill", "#dc2626");
+        } else {
+          if (pulseCircle) pulseCircle.setAttribute("fill", "#f59e0b");
+          if (dotCircle) dotCircle.setAttribute("fill", "#d97706");
+        }
+      } else {
+        simRubHotspot.classList.add("hidden");
+      }
+    }
 
     // 3. Atualizar Badges do Stage
     if (stageCarBadge) {

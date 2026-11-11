@@ -678,9 +678,69 @@
               </div>
             </div>
 
-            <!-- ARENA FOTOGRÁFICA INTERATIVA DO SIMULADOR (CANVAS REAL ULTRA-LIMPO SEM CÍRCULOS ARTIFICIAIS) -->
-            <div class="relative w-full max-w-xl mx-auto my-3 flex flex-col items-center justify-center">
-              <canvas id="sim-canvas" width="600" height="400" class="w-full h-auto max-w-full rounded-2xl block"></canvas>
+            <!-- ARENA FOTOGRÁFICA DO SIMULADOR (CONTAINER SVG VIEWBOX 0 0 1000 500) -->
+            <div class="relative w-full max-w-4xl mx-auto my-3 flex flex-col items-center justify-center" style="overflow: visible;">
+              <svg id="sim-svg-stage" viewBox="0 0 1000 500" class="w-full h-auto max-w-full block" style="overflow: visible;">
+                <defs>
+                  <radialGradient id="sim-ground-shadow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#0f172a" stop-opacity="0.30" />
+                    <stop offset="60%" stop-color="#0f172a" stop-opacity="0.10" />
+                    <stop offset="100%" stop-color="#0f172a" stop-opacity="0" />
+                  </radialGradient>
+                  <linearGradient id="sim-spoke-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#f8fafc" />
+                    <stop offset="45%" stop-color="#cbd5e1" />
+                    <stop offset="100%" stop-color="#94a3b8" />
+                  </linearGradient>
+                  <radialGradient id="sim-tire-rubber" cx="35%" cy="35%" r="65%">
+                    <stop offset="0%" stop-color="#2a2e36" />
+                    <stop offset="70%" stop-color="#181a1f" />
+                    <stop offset="100%" stop-color="#0e1014" />
+                  </radialGradient>
+                </defs>
+
+                <!-- Sombra suave no solo sob as rodas -->
+                <ellipse cx="540" cy="416" rx="420" ry="14" fill="url(#sim-ground-shadow)" />
+
+                <!-- CAMADA 1: Dois círculos escuros (fill="#18181b", r="72") nas posições cx="265" cy="340" (dianteiro) e cx="815" cy="340" (traseiro), subindo junto com a carroceria no Lift -->
+                <g id="sim-layer-1-masks" class="transition-transform duration-300 ease-out" transform="translate(0, 0)">
+                  <circle cx="265" cy="340" r="72" fill="#18181b" />
+                  <circle cx="815" cy="340" r="72" fill="#18181b" />
+                </g>
+
+                <!-- CAMADA 2: As duas rodas dinâmicas em SVG vetorial (pneu com cravos AT e roda de 5 raios) centralizadas em x=265 e x=815 -->
+                <g id="sim-layer-2-wheels">
+                  <!-- Roda Dianteira Dinâmica -->
+                  <g id="sim-dyn-wheel-front" class="transition-transform duration-300 ease-out" transform="translate(265, 340)">
+                    <!-- Injetado dinamicamente via JS -->
+                  </g>
+
+                  <!-- Roda Traseira Dinâmica -->
+                  <g id="sim-dyn-wheel-rear" class="transition-transform duration-300 ease-out" transform="translate(815, 340)">
+                    <!-- Injetado dinamicamente via JS -->
+                  </g>
+                </g>
+
+                <!-- CAMADA 3: A imagem tracker-carroceria.jpg (width="1000" height="500") recebendo apenas transform: translateY() -->
+                <g id="sim-layer-3-body" class="transition-transform duration-300 ease-out" transform="translate(0, 0)">
+                  <image 
+                    id="sim-car-base-img" 
+                    href="public/tracker-carroceria.jpg" 
+                    xlink:href="public/tracker-carroceria.jpg"
+                    x="0" 
+                    y="0" 
+                    width="1000" 
+                    height="500" 
+                    preserveAspectRatio="xMidYMid meet" 
+                  />
+                </g>
+
+                <!-- Indicador de Ponto de Raspagem -->
+                <g id="sim-rub-hotspot" class="hidden" transform="translate(195, 340)">
+                  <circle cx="0" cy="0" r="14" fill="#ef4444" opacity="0.3" class="animate-ping" />
+                  <circle cx="0" cy="0" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="2" />
+                </g>
+              </svg>
             </div>
 
             <!-- Linha do Solo / Asfalto -->
