@@ -697,6 +697,232 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  // ==================== VISTA TRASEIRA COM FOTO REAL ====================
+  // Foto public/tracker-traseira.png (547x365) com a área abaixo do para-choque limpa.
+  // Medidas na foto: pneus centrados em x=134 e x=438 (bitola 304 px = 1470 mm),
+  // solo em y=362 e base do para-choque em y=308. A foto é escalada para a mesma
+  // escala da vista vetorial (0.24 px/mm) e sobe com o lift; pneus, eixo rígido,
+  // diferencial e molas são desenhados por baixo do para-choque.
+  const REAR_PHOTO = {
+    src: "public/tracker-traseira.png",
+    w: 547,
+    h: 365,
+    k: 1.1605, // px SVG por px da foto
+    x: 168.1,
+    y: 29.9,
+    bumperY: 29.9 + 308 * 1.1605 // base do para-choque em coords SVG (posição de fábrica)
+  };
+
+  function generateRearPhotoSvg({ tread, lift, tireInfo, rubState, diffCm }) {
+    const { S, CX, G } = FR;
+    const diameterMm = tireInfo.diameterMm || FR.STOCK_DIAMETER_MM;
+    const widthMm = parseInt(tireInfo.size, 10) || FR.STOCK_WIDTH_MM;
+    const D = diameterMm * S;
+    const W = widthMm * S;
+    const R = D / 2;
+    const stockD = FR.STOCK_DIAMETER_MM * S;
+    const stockW = FR.STOCK_WIDTH_MM * S;
+    const rise = (D - stockD) / 2 + lift * 25.4 * S * 2; // lift ~2x exagerado, igual às outras vistas
+    const by = (yStock) => yStock - rise;
+    const hubX = CX - FR.HALF_TRACK_MM * S;
+    const hubY = G - R;
+    const diffR = 36;
+    const bumperY = by(REAR_PHOTO.bumperY);
+    const isStockTire = tireInfo.size === "235/60 R16";
+
+    const half = `
+      ${coilSpringSvg(392, hubY - 8, by(312), 24)}
+      <line x1="420" y1="${(hubY + 6).toFixed(1)}" x2="424" y2="${by(312).toFixed(1)}" stroke="#94a3b8" stroke-width="5" stroke-linecap="round" />
+      ${frontTireSvg(hubX, D, W, tread)}
+      ${isStockTire ? "" : `<rect x="${(hubX - stockW / 2).toFixed(1)}" y="${(G - stockD).toFixed(1)}" width="${stockW.toFixed(1)}" height="${stockD.toFixed(1)}" rx="12" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.9" />`}
+    `;
+    const mirror = (markup) => `${markup}<g transform="translate(${CX * 2}, 0) scale(-1, 1)">${markup}</g>`;
+
+    let rubMarks = "";
+    if (rubState !== "free") {
+      const color = rubState === "severe" ? "#dc2626" : "#d97706";
+      [hubX, CX * 2 - hubX].forEach((x) => {
+        rubMarks += `
+          <circle cx="${x}" cy="${(bumperY - 4).toFixed(1)}" r="9" fill="${color}" opacity="0.35">
+            <animate attributeName="r" values="8;18;8" dur="1.4s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.45;0;0.45" dur="1.4s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="${x}" cy="${(bumperY - 4).toFixed(1)}" r="6" fill="${color}" stroke="#fff" stroke-width="2" />`;
+      });
+    }
+
+    const tireLabels = [hubX, CX * 2 - hubX]
+      .map((x) => `<text x="${x}" y="472" font-size="12" font-weight="800" font-family="Inter, sans-serif" text-anchor="middle" fill="#334155">${widthMm} mm</text>`)
+      .join("");
+
+    const legend = isStockTire
+      ? ""
+      : `<g><line x1="140" y1="492" x2="164" y2="492" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 4" />
+         <text x="170" y="496" font-size="11" font-family="Inter, sans-serif" fill="#64748b">Pneu original 235/60 R16</text></g>`;
+
+    return `
+      <defs>
+        <clipPath id="fr-tire-clip-l" clipPathUnits="userSpaceOnUse">
+          <rect x="${(hubX - W / 2).toFixed(1)}" y="${(G - D).toFixed(1)}" width="${W.toFixed(1)}" height="${D.toFixed(1)}" rx="${Math.min(W * 0.3, 16).toFixed(1)}" />
+        </clipPath>
+        <clipPath id="rear-under-bumper" clipPathUnits="userSpaceOnUse">
+          <rect x="0" y="${bumperY.toFixed(1)}" width="1000" height="${(520 - bumperY).toFixed(1)}" />
+        </clipPath>
+      </defs>
+
+      <ellipse cx="${CX}" cy="${G + 3}" rx="300" ry="10" fill="url(#sim-ground-shadow)" />
+      <line x1="120" y1="${G}" x2="880" y2="${G}" stroke="#94a3b8" stroke-width="1.5" />
+
+      <g transform="translate(0, ${(-rise).toFixed(2)})">
+        <image href="${REAR_PHOTO.src}" x="${REAR_PHOTO.x}" y="${REAR_PHOTO.y}" width="${(REAR_PHOTO.w * REAR_PHOTO.k).toFixed(1)}" height="${(REAR_PHOTO.h * REAR_PHOTO.k).toFixed(1)}" preserveAspectRatio="none" />
+      </g>
+
+      <!-- Tudo que fica por baixo do para-choque: chassi, eixo rígido, diferencial, molas e pneus -->
+      <g clip-path="url(#rear-under-bumper)">
+        <rect x="360" y="${(bumperY - 2).toFixed(1)}" width="280" height="9" rx="3" fill="#1f2937" />
+        <rect x="${(hubX + W / 2 - 2).toFixed(1)}" y="${(hubY - 7).toFixed(1)}" width="${(2 * (CX - hubX) - W + 4).toFixed(1)}" height="14" rx="5" fill="#374151" stroke="#111827" />
+        <circle cx="${CX}" cy="${hubY.toFixed(1)}" r="${diffR}" fill="#4b5563" stroke="#111827" stroke-width="2" />
+        <circle cx="${CX}" cy="${hubY.toFixed(1)}" r="24" fill="#6b7280" stroke="#374151" />
+        <circle cx="${CX}" cy="${hubY.toFixed(1)}" r="6" fill="#374151" />
+        ${mirror(half)}
+      </g>
+
+      ${dimensionSvg(CX, G, hubY + diffR, `Diferencial ${diffCm} cm`)}
+      ${rubMarks}
+      ${tireLabels}
+      ${legend}
+    `;
+  }
+
+  // ==================== VISTA FRONTAL COM FOTO REAL ====================
+  // Foto public/tracker-frente.jpg (625x469), fundo com paisagem: o carro é recortado por uma
+  // silhueta (polígono medido na foto) que termina na base do para-choque (y=362).
+  // Medidas: pneus centrados em x=129 e x=479 (bitola 350 px), solo em y=440, eixo de simetria x=304.
+  const FRONT_PHOTO = {
+    src: "public/tracker-frente.jpg",
+    w: 625,
+    h: 469,
+    k: 1.008,
+    x: 500 - 305.5 * 1.008,
+    y: 450 - 440 * 1.008,
+    bumperPhotoY: 357,
+    // Contorno esquerdo medido linha a linha na foto [y, x]; o direito é simétrico em x=305.5
+    leftEdge: [
+      [63, 194], [74, 170], [86, 164], [104, 156], [116, 151], [128, 146], [140, 142], [152, 138],
+      [164, 135], [176, 132], [188, 130], [200, 125], [212, 118], [224, 108], [236, 104], [248, 92],
+      [254, 89], [272, 91], [290, 92], [302, 96], [314, 101], [332, 103], [338, 115], [344, 125],
+      [350, 130], [357, 142]
+    ],
+    mirrorLeft: [[78, 166], [85, 159], [126, 159], [128, 195], [89, 196], [79, 186]],
+    axis: 305.5
+  };
+
+  function frontPhotoPolygons() {
+    const P = FRONT_PHOTO;
+    const toSvg = ([px, py]) => `${(P.x + px * P.k).toFixed(1)},${(P.y + py * P.k).toFixed(1)}`;
+    const left = P.leftEdge.map(([y, x]) => [x, y]);
+    const right = P.leftEdge.slice().reverse().map(([y, x]) => [2 * P.axis - x, y]);
+    // Contorno fechado: topo-esquerdo -> desce pela esquerda -> base -> sobe pela direita
+    const outline = [...left, ...right];
+    const mirrorR = P.mirrorLeft.map(([x, y]) => [2 * P.axis - x, y]);
+    return [outline, P.mirrorLeft, mirrorR].map((poly) => poly.map(toSvg).join(" "));
+  }
+
+  function generateFrontPhotoSvg({ tread, lift, tireInfo, rubState, chassisCm }) {
+    const { S, CX, G } = FR;
+    const P = FRONT_PHOTO;
+    const diameterMm = tireInfo.diameterMm || FR.STOCK_DIAMETER_MM;
+    const widthMm = parseInt(tireInfo.size, 10) || FR.STOCK_WIDTH_MM;
+    const D = diameterMm * S;
+    const W = widthMm * S;
+    const R = D / 2;
+    const stockD = FR.STOCK_DIAMETER_MM * S;
+    const stockW = FR.STOCK_WIDTH_MM * S;
+    const rise = (D - stockD) / 2 + lift * 25.4 * S * 2; // lift ~2x exagerado, igual às outras vistas
+    const by = (yStock) => yStock - rise;
+    const hubX = CX - FR.HALF_TRACK_MM * S;
+    const hubY = G - R;
+    const bumperStockY = P.y + P.bumperPhotoY * P.k;
+    const bumperY = by(bumperStockY);
+    const isStockTire = tireInfo.size === "235/60 R16";
+
+    const polygons = frontPhotoPolygons();
+    const riseT = `translate(0, ${(-rise).toFixed(2)})`;
+
+    // Metade esquerda (espelhada): bandejas, semieixo e pneu
+    const half = `
+      <line x1="${hubX + 10}" y1="${(hubY + 18).toFixed(1)}" x2="418" y2="${by(392).toFixed(1)}" stroke="#334155" stroke-width="7" stroke-linecap="round" />
+      <line x1="${hubX + 10}" y1="${(hubY - 24).toFixed(1)}" x2="428" y2="${by(340).toFixed(1)}" stroke="#475569" stroke-width="6" stroke-linecap="round" />
+      <line x1="${hubX + 6}" y1="${hubY.toFixed(1)}" x2="466" y2="${by(386).toFixed(1)}" stroke="#64748b" stroke-width="5" stroke-linecap="round" />
+      <circle cx="466" cy="${by(386).toFixed(1)}" r="6" fill="#475569" />
+      ${frontTireSvg(hubX, D, W, tread)}
+      ${isStockTire ? "" : `<rect x="${(hubX - stockW / 2).toFixed(1)}" y="${(G - stockD).toFixed(1)}" width="${stockW.toFixed(1)}" height="${stockD.toFixed(1)}" rx="12" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.9" />`}
+    `;
+    const mirror = (markup) => `${markup}<g transform="translate(${CX * 2}, 0) scale(-1, 1)">${markup}</g>`;
+
+    let rubMarks = "";
+    if (rubState !== "free") {
+      const color = rubState === "severe" ? "#dc2626" : "#d97706";
+      [hubX, CX * 2 - hubX].forEach((x) => {
+        rubMarks += `
+          <circle cx="${x}" cy="${(bumperY - 4).toFixed(1)}" r="9" fill="${color}" opacity="0.35">
+            <animate attributeName="r" values="8;18;8" dur="1.4s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.45;0;0.45" dur="1.4s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="${x}" cy="${(bumperY - 4).toFixed(1)}" r="6" fill="${color}" stroke="#fff" stroke-width="2" />`;
+      });
+    }
+
+    const tireLabels = [hubX, CX * 2 - hubX]
+      .map((x) => `<text x="${x}" y="472" font-size="12" font-weight="800" font-family="Inter, sans-serif" text-anchor="middle" fill="#334155">${widthMm} mm</text>`)
+      .join("");
+
+    const legend = isStockTire
+      ? ""
+      : `<g><line x1="140" y1="492" x2="164" y2="492" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 4" />
+         <text x="170" y="496" font-size="11" font-family="Inter, sans-serif" fill="#64748b">Pneu original 235/60 R16</text></g>`;
+
+    return `
+      <defs>
+        <clipPath id="fr-tire-clip-l" clipPathUnits="userSpaceOnUse">
+          <rect x="${(hubX - W / 2).toFixed(1)}" y="${(G - D).toFixed(1)}" width="${W.toFixed(1)}" height="${D.toFixed(1)}" rx="${Math.min(W * 0.3, 16).toFixed(1)}" />
+        </clipPath>
+        <clipPath id="front-photo-silhouette" clipPathUnits="userSpaceOnUse">
+          ${polygons.map((p) => `<polygon points="${p}" />`).join("")}
+        </clipPath>
+        <!-- Máscara: mostra pneus/suspensão em tudo que NÃO é carroceria e abaixo do capô -->
+        <mask id="front-not-body" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="520">
+          <rect x="0" y="0" width="1000" height="520" fill="#fff" />
+          <g transform="${riseT}">
+            ${polygons.map((p) => `<polygon points="${p}" fill="#000" />`).join("")}
+          </g>
+        </mask>
+      </defs>
+
+      <ellipse cx="${CX}" cy="${G + 3}" rx="300" ry="10" fill="url(#sim-ground-shadow)" />
+      <line x1="120" y1="${G}" x2="880" y2="${G}" stroke="#94a3b8" stroke-width="1.5" />
+
+      <!-- Carroceria: foto recortada pela silhueta, sobe com o lift -->
+      <g transform="translate(0, ${(-rise).toFixed(2)})">
+        <image href="${P.src}" x="${P.x.toFixed(1)}" y="${P.y.toFixed(1)}" width="${(P.w * P.k).toFixed(1)}" height="${(P.h * P.k).toFixed(1)}" preserveAspectRatio="none" clip-path="url(#front-photo-silhouette)" />
+      </g>
+
+      <!-- Por baixo do para-choque: travessa, diferencial dianteiro, bandejas, semieixos e pneus -->
+      <g mask="url(#front-not-body)">
+        <g transform="${riseT}">
+          <rect x="384" y="${bumperStockY.toFixed(1)}" width="232" height="${(403 - bumperStockY).toFixed(1)}" rx="5" fill="#1f2937" />
+          <ellipse cx="500" cy="388" rx="36" ry="14" fill="#374151" stroke="#111827" />
+        </g>
+        ${mirror(half)}
+      </g>
+
+      ${dimensionSvg(CX, G, by(403), `Chassi ${chassisCm} cm`)}
+      ${rubMarks}
+      ${tireLabels}
+      ${legend}
+    `;
+  }
+
   function renderAngleView(params) {
     const sideGroup = document.getElementById("sim-view-side");
     const frGroup = document.getElementById("sim-view-frontrear");
@@ -712,12 +938,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     sideGroup.style.display = "none";
     frGroup.style.display = "";
-    frGroup.innerHTML = generateFrontRearSvg(params);
+    // Fotos reais são da Tracker; a Grand Vitara usa a ilustração vetorial (azul, emblema Suzuki)
+    const usePhoto = params.car === "tracker";
+    if (usePhoto) {
+      frGroup.innerHTML = params.angle === "rear" ? generateRearPhotoSvg(params) : generateFrontPhotoSvg(params);
+    } else {
+      frGroup.innerHTML = generateFrontRearSvg(params);
+    }
     if (caption) {
-      caption.textContent =
-        params.angle === "front"
-          ? "Vista frontal em escala: largura/diâmetro reais do pneu, bandejas e semieixos acompanham o lift"
-          : "Vista traseira em escala: eixo rígido com diferencial, molas esticando com o lift e estepe da medida escolhida";
+      const captions = {
+        front: usePhoto
+          ? "Foto real (bestcars.com.br) em escala: pneus na medida escolhida, bandejas e semieixos acompanham o lift"
+          : "Vista frontal em escala: largura/diâmetro reais do pneu, bandejas e semieixos acompanham o lift",
+        rear: usePhoto
+          ? "Foto real (carrosnaweb.com.br) em escala: eixo rígido com diferencial e molas esticando com o lift"
+          : "Vista traseira em escala: eixo rígido com diferencial, molas esticando com o lift e estepe da medida escolhida"
+      };
+      caption.textContent = captions[params.angle];
     }
   }
 
