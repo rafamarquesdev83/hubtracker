@@ -678,6 +678,15 @@
               </div>
             </div>
 
+            <!-- Seletor de Ângulo de Visão (Lateral / Frente / Traseira) -->
+            <div class="flex justify-center mt-3 z-20">
+              <div class="inline-flex bg-white/90 backdrop-blur-md border border-slate-300 rounded-xl p-1 shadow-sm gap-1" role="tablist" aria-label="Ângulo de visão">
+                <button class="sim-angle-btn px-4 py-1.5 rounded-lg text-xs font-bold transition bg-slate-900 text-white" data-angle="side">Lateral</button>
+                <button class="sim-angle-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-700 hover:bg-slate-100" data-angle="front">Frente</button>
+                <button class="sim-angle-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-700 hover:bg-slate-100" data-angle="rear">Traseira</button>
+              </div>
+            </div>
+
             <!-- ARENA FOTOGRÁFICA DO SIMULADOR (CONTAINER SVG VIEWBOX 0 0 1000 500) -->
             <div class="relative w-full max-w-4xl mx-auto my-3 flex flex-col items-center justify-center" style="overflow: visible;">
               <svg id="sim-svg-stage" viewBox="0 0 1000 500" class="w-full h-auto max-w-full block" style="overflow: visible;">
@@ -710,6 +719,8 @@
                   </clipPath>
                 </defs>
 
+                <!-- ===== VISTA LATERAL (foto real + rodas vetoriais) ===== -->
+                <g id="sim-view-side">
                 <!-- Sombra suave no solo sob as rodas -->
                 <ellipse cx="535" cy="426" rx="420" ry="12" fill="url(#sim-ground-shadow)" />
 
@@ -746,6 +757,10 @@
                   <circle cx="0" cy="0" r="14" fill="#ef4444" opacity="0.3" class="animate-ping" />
                   <circle cx="0" cy="0" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="2" />
                 </g>
+                </g>
+
+                <!-- ===== VISTAS FRONTAL / TRASEIRA (ilustração vetorial em escala, gerada via JS) ===== -->
+                <g id="sim-view-frontrear" style="display: none;"></g>
               </svg>
             </div>
 
@@ -760,7 +775,7 @@
                 <span id="stage-clearance-diff" class="text-emerald-700 font-bold text-xs">(+4,1 cm vs fábrica)</span>
               </span>
 
-              <span class="text-[11px] text-slate-500 hidden sm:inline">
+              <span id="stage-view-caption" class="text-[11px] text-slate-500 hidden sm:inline">
                 Fotografia real com aro original Suzuki/GM e elevação proporcional precisa
               </span>
             </div>
