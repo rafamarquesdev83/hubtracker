@@ -697,42 +697,48 @@
                     <stop offset="70%" stop-color="#181a1f" />
                     <stop offset="100%" stop-color="#0e1014" />
                   </radialGradient>
+                  <!-- Recorte das caixas de roda: o pneu só aparece dentro do arco do para-lama
+                       (e abaixo da linha do centro). Os shapes sobem junto com a carroceria via JS,
+                       então um pneu grande sem lift fica "cortado" pelo para-lama = raspagem. -->
+                  <clipPath id="sim-clip-front" clipPathUnits="userSpaceOnUse">
+                    <circle class="sim-arch-shape" cx="250" cy="358" r="92" />
+                    <rect class="sim-arch-shape" x="150" y="358" width="200" height="142" />
+                  </clipPath>
+                  <clipPath id="sim-clip-rear" clipPathUnits="userSpaceOnUse">
+                    <circle class="sim-arch-shape" cx="818" cy="354" r="88" />
+                    <rect class="sim-arch-shape" x="725" y="354" width="186" height="146" />
+                  </clipPath>
                 </defs>
 
                 <!-- Sombra suave no solo sob as rodas -->
-                <ellipse cx="540" cy="416" rx="420" ry="14" fill="url(#sim-ground-shadow)" />
+                <ellipse cx="535" cy="426" rx="420" ry="12" fill="url(#sim-ground-shadow)" />
 
-                <!-- CAMADA 1: Dois círculos escuros (fill="#18181b", r="72") nas posições cx="265" cy="340" (dianteiro) e cx="815" cy="340" (traseiro), subindo junto com a carroceria no Lift -->
-                <g id="sim-layer-1-masks" class="transition-transform duration-300 ease-out" transform="translate(0, 0)">
-                  <circle cx="265" cy="340" r="72" fill="#18181b" />
-                  <circle cx="815" cy="340" r="72" fill="#18181b" />
-                </g>
-
-                <!-- CAMADA 2: As duas rodas dinâmicas em SVG vetorial (pneu com cravos AT e roda de 5 raios) centralizadas em x=265 e x=815 -->
-                <g id="sim-layer-2-wheels">
-                  <!-- Roda Dianteira Dinâmica -->
-                  <g id="sim-dyn-wheel-front" class="transition-transform duration-300 ease-out" transform="translate(265, 340)">
-                    <!-- Injetado dinamicamente via JS -->
-                  </g>
-
-                  <!-- Roda Traseira Dinâmica -->
-                  <g id="sim-dyn-wheel-rear" class="transition-transform duration-300 ease-out" transform="translate(815, 340)">
-                    <!-- Injetado dinamicamente via JS -->
-                  </g>
-                </g>
-
-                <!-- CAMADA 3: A imagem tracker-carroceria.jpg (width="1000" height="500") recebendo apenas transform: translateY() -->
+                <!-- CAMADA 1: A foto da carroceria (JPG opaco) — fica ATRÁS das rodas e sobe com o Lift -->
                 <g id="sim-layer-3-body" class="transition-transform duration-300 ease-out" transform="translate(0, 0)">
-                  <image 
-                    id="sim-car-base-img" 
-                    href="public/tracker-carroceria.jpg" 
+                  <image
+                    id="sim-car-base-img"
+                    href="public/tracker-carroceria.jpg"
                     xlink:href="public/tracker-carroceria.jpg"
-                    x="0" 
-                    y="0" 
-                    width="1000" 
-                    height="500" 
-                    preserveAspectRatio="xMidYMid meet" 
+                    x="0"
+                    y="0"
+                    width="1000"
+                    height="500"
+                    preserveAspectRatio="xMidYMid meet"
                   />
+                </g>
+
+                <!-- CAMADA 2: As duas rodas vetoriais POR CIMA da foto, recortadas pelo arco da caixa de roda -->
+                <g id="sim-layer-2-wheels">
+                  <g clip-path="url(#sim-clip-front)">
+                    <g id="sim-dyn-wheel-front" class="transition-transform duration-300 ease-out" transform="translate(250, 350)">
+                      <!-- Injetado dinamicamente via JS -->
+                    </g>
+                  </g>
+                  <g clip-path="url(#sim-clip-rear)">
+                    <g id="sim-dyn-wheel-rear" class="transition-transform duration-300 ease-out" transform="translate(818, 350)">
+                      <!-- Injetado dinamicamente via JS -->
+                    </g>
+                  </g>
                 </g>
 
                 <!-- Indicador de Ponto de Raspagem -->

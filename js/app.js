@@ -60,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const simTreadBtns = document.querySelectorAll(".sim-tread-btn");
   const simTiresPillsContainer = document.getElementById("sim-tires-pills-container");
   const simSvgStage = document.getElementById("sim-svg-stage");
-  const simLayer1Masks = document.getElementById("sim-layer-1-masks");
   const simDynWheelFront = document.getElementById("sim-dyn-wheel-front");
   const simDynWheelRear = document.getElementById("sim-dyn-wheel-rear");
   const simLayer3Body = document.getElementById("sim-layer-3-body");
@@ -474,51 +473,56 @@ document.addEventListener("DOMContentLoaded", () => {
         "Lift 2.5\" a 3\", amortecedores especiais, Drop de diferencial dianteiro e para-choque off-road cortado.";
     }
 
-    // 2. Renderização SVG em 3 Camadas
-    // Geometria de Referência SVG (viewBox 0 0 1000 500)
-    // Diâmetro original de fábrica 235/60 R16 = 688 mm -> Raio base = 72 px
-    const baseRadius = 72;
+    // 2. Renderização SVG
+    // Geometria de Referência SVG (viewBox 0 0 1000 500), medida na foto tracker-carroceria.jpg:
+    //  - centro da caixa de roda dianteira x=250, traseira x=818
+    //  - solo (base do pneu) em y=424
+    // Diâmetro original de fábrica 235/60 R16 = 688 mm -> Raio base = 74 px (proporcional ao entre-eixos da foto)
+    const FRONT_X = 250;
+    const REAR_X = 818;
+    const GROUND_Y = 424;
+    const baseRadius = 74;
     const baseDiameterMm = 688;
     const tireScale = (tireInfo.diameterMm || baseDiameterMm) / baseDiameterMm;
     const currentRadius = baseRadius * tireScale;
     const radiusGainPx = currentRadius - baseRadius;
 
-    // Solo no SVG: com o pneu original (r=72) no cubo cy=340, a base do pneu toca 340 + 72 = 412.
-    // Como o pneu sempre assenta no chão, o cubo sobe com o ganho de raio:
-    const hubY = 340 - radiusGainPx;
+    // O pneu sempre assenta no chão: o cubo fica a 1 raio acima do solo
+    const hubY = GROUND_Y - currentRadius;
 
-    // A carroceria (e as caixas de roda da Camada 1) sobem com o Lift + ganho de raio do pneu
-    const liftPx = selectedLift * 22; // 0" = 0px, 1" = 22px, 2" = 44px, 2.5" = 55px
+    // A carroceria (foto + recorte das caixas de roda) sobe com o Lift + ganho de raio do pneu.
+    // Lift levemente exagerado (11 px/pol, ~2x a escala real) para ficar visível na tela.
+    const liftPx = selectedLift * 11;
     const totalBodyRise = liftPx + radiusGainPx;
     const bodyTranslateY = -totalBodyRise;
 
-    // Camada 1: Círculos escuros subindo junto com a carroceria no Lift
-    if (simLayer1Masks) {
-      simLayer1Masks.setAttribute("transform", `translate(0, ${bodyTranslateY.toFixed(2)})`);
-    }
-
-    // Camada 2: As duas rodas dinâmicas desenhadas em SVG vetorial centralizadas em x=265 e x=815
-    const wheelSvgContent = generateWheelSvg(currentRadius, selectedTread, selectedCar);
-    if (simDynWheelFront) {
-      simDynWheelFront.setAttribute("transform", `translate(265, ${hubY.toFixed(2)})`);
-      simDynWheelFront.innerHTML = wheelSvgContent;
-    }
-    if (simDynWheelRear) {
-      simDynWheelRear.setAttribute("transform", `translate(815, ${hubY.toFixed(2)})`);
-      simDynWheelRear.innerHTML = wheelSvgContent;
-    }
-
-    // Camada 3: A imagem tracker-carroceria.jpg recebendo apenas transform: translateY()
+    // Camada 1: Foto da carroceria subindo com o Lift
     if (simLayer3Body) {
       simLayer3Body.setAttribute("transform", `translate(0, ${bodyTranslateY.toFixed(2)})`);
     }
 
-    // Indicador dinâmico de ponto de raspagem
+    // Recorte das caixas de roda acompanha a carroceria
+    document.querySelectorAll(".sim-arch-shape").forEach((shape) => {
+      shape.setAttribute("transform", `translate(0, ${bodyTranslateY.toFixed(2)})`);
+    });
+
+    // Camada 2: As duas rodas vetoriais por cima da foto
+    const wheelSvgContent = generateWheelSvg(currentRadius, selectedTread, selectedCar);
+    if (simDynWheelFront) {
+      simDynWheelFront.setAttribute("transform", `translate(${FRONT_X}, ${hubY.toFixed(2)})`);
+      simDynWheelFront.innerHTML = wheelSvgContent;
+    }
+    if (simDynWheelRear) {
+      simDynWheelRear.setAttribute("transform", `translate(${REAR_X}, ${hubY.toFixed(2)})`);
+      simDynWheelRear.innerHTML = wheelSvgContent;
+    }
+
+    // Indicador dinâmico de ponto de raspagem: no topo-frontal do pneu, onde encosta no para-lama/para-choque
     if (simRubHotspot) {
       if (rubState !== "free") {
         simRubHotspot.classList.remove("hidden");
-        const rubX = 265 - currentRadius + 10;
-        const rubY = hubY + 12;
+        const rubX = FRONT_X - currentRadius * 0.6;
+        const rubY = hubY - currentRadius * 0.8;
         simRubHotspot.setAttribute("transform", `translate(${rubX.toFixed(1)}, ${rubY.toFixed(1)})`);
         const pulseCircle = simRubHotspot.querySelector(".animate-ping");
         const dotCircle = simRubHotspot.querySelectorAll("circle")[1];
